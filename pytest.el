@@ -275,16 +275,15 @@ Optional argument FLAGS py.test command line flags."
 This uses the `::` delimiter between the
 filename, class and method in order to find the specific test
 case.  This requires pytest >= 1.2."
-  (let* ((inner-obj (pytest-inner-testable))
-         (outer (pytest-outer-testable))
-         ;; elisp can't return multiple values
-         (outer-def (car outer))
-         (outer-obj (cdr outer)))
-    (concat
-     (buffer-file-name)
-     (cond ((equal outer-def "def") (format "::%s" outer-obj))
-       ((equal inner-obj outer-obj) (format "::%s" outer-obj))
-       (t (format "::%s::%s" outer-obj inner-obj))))))
+  (format "%s::%s" (buffer-file-name) (pytest-which-func-current))
+  )
+
+
+(defun pytest-which-func-current ()
+  "Determine the name of the current function."
+  (gethash (selected-window) which-func-table)
+  )
+
 
 (defun pytest-inner-testable ()
   "Find the function name for `pytest-one'."
